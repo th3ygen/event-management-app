@@ -8,6 +8,7 @@ import { PasswordService } from './auth/password/password.service';
 import { PasswordModule } from './auth/password/password.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ConfigModule } from '@nestjs/config';
     PrismaModule,
     PasswordModule,
     AuthModule,
+    EventsModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService, PasswordService],
