@@ -18,8 +18,10 @@ export class CreateEventDto {
   end: number;
 
   @IsNotEmpty()
-  @IsNotEmpty()
   location: string;
+
+  @IsString()
+  organizer?: string;
 
   @IsUrl()
   posterUrl?: string;

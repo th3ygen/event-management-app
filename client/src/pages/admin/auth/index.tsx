@@ -8,9 +8,93 @@ import {
 	Lock,
 	MailIcon as Email,
 } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+	loginSchema,
+	LoginSchemaType,
+	registerSchema,
+	RegisterSchemaType,
+} from "@/schemas/auth.schema";
+import { SubmitHandler, useForm } from "react-hook-form";
+import RegisterForm from "./register-form";
+import LoginForm from "./login-form";
 
 export default function AdminAuthPage() {
 	const [activeForm, setActiveForm] = useState<"login" | "register">("login");
+
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<LoginSchemaType | RegisterSchemaType>({
+		resolver:
+			activeForm === "login"
+				? zodResolver(loginSchema)
+				: zodResolver(registerSchema),
+	});
+
+	const loginMutation = useMutation({
+		mutationFn: async (data: LoginSchemaType) => {
+			const response = await fetch("/auth/login", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(data),
+			});
+
+			if (!response.ok) {
+				throw new Error("Login failed");
+			}
+
+			return response.json();
+		},
+		onSuccess: (data) => {
+			// Handle successful login (e.g., store tokens, redirect)
+			console.log("Login successful:", data);
+		},
+		onError: (error) => {
+			// Handle login error (e.g., show error message)
+			console.error("Login error:", error);
+		},
+	});
+	const registerMutation = useMutation({
+		mutationFn: async (data: RegisterSchemaType) => {
+			const response = await fetch("/auth/register", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					email: data.email,
+					password: data.password,
+				}),
+			});
+
+			if (!response.ok) {
+				throw new Error("Register failed");
+			}
+
+			return response.json();
+		},
+		onSuccess: (data) => {
+			// Handle successful register (e.g., store tokens, redirect)
+			console.log("Register successful:", data);
+		},
+		onError: (error) => {
+			// Handle register error (e.g., show error message)
+			console.error("register error:", error);
+		},
+	});
+
+	const handleLoginSubmit: SubmitHandler<LoginSchemaType> = (data) => {
+		loginMutation.mutate(data);
+	};
+
+	const handleRegisterSubmit: SubmitHandler<RegisterSchemaType> = (data) => {
+		registerMutation.mutate(data);
+	};
 
 	const toggleForm = () => {
 		setActiveForm(activeForm === "login" ? "register" : "login");
@@ -40,81 +124,7 @@ export default function AdminAuthPage() {
 					}}
 				>
 					{activeForm === "login" ? (
-						<div className="absolute inset-0 overflow-hidden">
-							<motion.div
-								initial={{ opacity: 0, x: -20 }}
-								animate={{ opacity: 1, x: 0 }}
-								transition={{ delay: 0.3, duration: 0.4 }}
-								className="p-8 w-full h-full"
-								style={{ width: "400px", minWidth: "100%" }}
-							>
-								<Typography
-									variant="h4"
-									component="h1"
-									className="mb-6 font-bold text-gray-800"
-								>
-									Login to your account
-								</Typography>
-
-								<form className="space-y-4">
-									<div className="flex items-center space-x-2 border-b-2 border-gray-300 py-2">
-										<Person
-											size={20}
-											className="text-gray-500"
-											style={{
-												transform: "translateY(7px)",
-											}}
-										/>
-										<TextField
-											fullWidth
-											variant="standard"
-											label="Email"
-											slotProps={{
-												input: {
-													disableUnderline: true,
-												},
-											}}
-										/>
-									</div>
-
-									<div className="flex items-center space-x-2 border-b-2 border-gray-300 py-2">
-										<Lock
-											size={20}
-											className="text-gray-500"
-											style={{
-												transform: "translateY(6px)",
-											}}
-										/>
-										<TextField
-											fullWidth
-											type="password"
-											variant="standard"
-											label="Password"
-											slotProps={{
-												input: {
-													disableUnderline: true,
-												},
-											}}
-										/>
-									</div>
-
-									<div className="flex justify-between items-center pt-4">
-										<Typography
-											variant="body2"
-											className="text-gray-600"
-										>
-											Forgot password?
-										</Typography>
-										<Button
-											variant="contained"
-											className="bg-cyan-600 hover:bg-cyan-700"
-										>
-											Login
-										</Button>
-									</div>
-								</form>
-							</motion.div>
-						</div>
+						<LoginForm />
 					) : (
 						<motion.div
 							className="h-full flex items-center justify-center cursor-pointer"
@@ -154,102 +164,7 @@ export default function AdminAuthPage() {
 					}}
 				>
 					{activeForm === "register" ? (
-						<div className="absolute inset-0 overflow-hidden">
-							<motion.div
-								initial={{ opacity: 0, x: 20 }}
-								animate={{ opacity: 1, x: 0 }}
-								transition={{ delay: 0.3, duration: 0.4 }}
-								className="p-8 h-full"
-								style={{ width: "400px", minWidth: "100%" }}
-							>
-								<Typography
-									variant="h4"
-									component="h1"
-									className="mb-6 font-bold text-gray-800"
-								>
-									Create an account
-								</Typography>
-
-								<form className="space-y-4">
-									<div className="flex items-center space-x-2 border-b-2 border-gray-300 py-2">
-										<Person
-											size={20}
-											className="text-gray-500"
-											style={{
-												transform: "translateY(7px)",
-											}}
-										/>
-										<TextField
-											fullWidth
-											variant="standard"
-											label="Full Name"
-											slotProps={{
-												input: {
-													disableUnderline: true,
-												},
-											}}
-										/>
-									</div>
-
-									<div className="flex items-center space-x-2 border-b-2 border-gray-300 py-2">
-										<Email
-											size={20}
-											className="text-gray-500"
-											style={{
-												transform: "translateY(7px)",
-											}}
-										/>
-										<TextField
-											fullWidth
-											type="email"
-											variant="standard"
-											label="Email Address"
-											slotProps={{
-												input: {
-													disableUnderline: true,
-												},
-											}}
-										/>
-									</div>
-
-									<div className="flex items-center space-x-2 border-b-2 border-gray-300 py-2">
-										<Lock
-											size={20}
-											className="text-gray-500"
-											style={{
-												transform: "translateY(6px)",
-											}}
-										/>
-										<TextField
-											fullWidth
-											type="password"
-											variant="standard"
-											label="Password"
-											slotProps={{
-												input: {
-													disableUnderline: true,
-												},
-											}}
-										/>
-									</div>
-
-									<div className="flex justify-between items-center pt-4">
-										<Typography
-											variant="body2"
-											className="text-gray-600"
-										>
-											Already have an account?
-										</Typography>
-										<Button
-											variant="contained"
-											className="bg-cyan-600 hover:bg-cyan-700"
-										>
-											Register
-										</Button>
-									</div>
-								</form>
-							</motion.div>
-						</div>
+						<RegisterForm />
 					) : (
 						<motion.div
 							className="h-full flex items-center justify-center cursor-pointer"

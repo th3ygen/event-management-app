@@ -32,7 +32,7 @@ export default function StatisticsCards({ events }: StatisticsCardsProps) {
 	);
 
 	return (
-		<Grid container spacing={2} className="mb-6">
+		<Grid container spacing={2} className="mb-6 pt-4">
 			<Grid xs={12} sm={6} md={3}>
 				<Card className="p-4 h-full bg-white shadow-sm">
 					<div className="flex items-center gap-4">

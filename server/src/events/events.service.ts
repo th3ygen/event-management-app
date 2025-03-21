@@ -8,7 +8,7 @@ export class EventsService {
   constructor(private prisma: PrismaService) {}
 
   async create(createEventDto: CreateEventDto) {
-    const { userId, name, start, end, location } = createEventDto;
+    const { userId, name, start, end, organizer, location } = createEventDto;
 
     const startDate = new Date(start);
     const endDate = new Date(end);
@@ -36,6 +36,7 @@ export class EventsService {
         eventName: name,
         startDate,
         endDate,
+        organizer,
         location,
       },
     });

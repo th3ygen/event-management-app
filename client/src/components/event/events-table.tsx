@@ -114,7 +114,7 @@ export default function EventsTable({
 	};
 
 	return (
-		<Sheet className="p-4 mb-4 bg-white rounded-lg shadow-sm">
+		<Sheet className="p-4 mt-8 mb-4 bg-white rounded-lg shadow-sm">
 			<div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-4">
 				<Typography level="h2">Events List</Typography>
 				<div className="flex gap-4 w-full md:w-auto items-center">

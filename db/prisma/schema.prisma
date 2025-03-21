@@ -2,7 +2,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output = "../../server/node_modules/.prisma/client"
+  output   = "../../server/node_modules/.prisma/client"
 }
 
 datasource db {
@@ -37,6 +37,7 @@ model Event {
   endDate   DateTime
   location  String
   posterUrl String?
+  organizer String?
   status    EventStatus @default(ONGOING)
 
   createdAt DateTime @default(now())

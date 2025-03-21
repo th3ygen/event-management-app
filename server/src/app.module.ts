@@ -9,10 +9,13 @@ import { PasswordModule } from './auth/password/password.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { EventsModule } from './events/events.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     UsersModule,
     PrismaModule,
     PasswordModule,
